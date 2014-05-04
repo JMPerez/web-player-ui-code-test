@@ -1,4 +1,4 @@
-# Web Music Player
+# Web Player Code Test
 
 This is a small project that I created in April 2012 as a code test when joining Spotify, consisting of creating a semi-functional web-based Music Player interface using HTML5 and JavaScript.
 
