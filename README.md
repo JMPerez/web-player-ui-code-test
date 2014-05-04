@@ -1,18 +1,21 @@
 # Web Music Player
 
-This is a small project that I created in April 2012 as a code test, consisting of creating a semi-functional web-based Music Player interface using HTML5 and JavaScript.
+This is a small project that I created in April 2012 as a code test when joining Spotify, consisting of creating a semi-functional web-based Music Player interface using HTML5 and JavaScript.
 
 The interface serves three purposes:
+
 1. Perform track/artist/album searches through Spotify Metadata API
 2. Maintain playlists
-	a. CRUD (Create, Remove, Update, Delete)
-	b. Add/remove tracks
+  - CRUD (Create, Remove, Update, Delete)
+  - Add/remove tracks
 3. Maintain a current queue of songs
 4. Player controls
-	a. Play - Hint: “Play” songs using setTimeout for the song length
-	b. Stop
-	c. Rewind
-	d. FastForward
+  - Play - “Play” songs using setTimeout for the song length
+  - Stop
+  - Rewind
+  - FastForward
+
+Note that this is only a UI and there is no music playback.
 
 ## How to Run
 
