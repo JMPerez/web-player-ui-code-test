@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Web Music Player</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet"/>
+		<link href="css/custom-style.css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="#">
+					Web Music Player </a>
+					<ul class="nav">
+						<li><a href="about.html">About</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span12">
+					<form id="search" class="form-inline well pull-right">
+						<input id="term" placeholder="Search an artist, album or track"></input>
+						<select id="method" class="span2">
+							<option value="artist">Artist</option>
+							<option value="album">Album</option>
+							<option value="track">Track</option>
+						</select>
+						<input type="submit" value="Search" class="btn btn-primary"></input>
+					</form>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="span3">
+					<div class="page-header">
+						<h2>Playlists</h2>
+					</div>
+					<form id="create-playlist">
+						<input type="text" id="playlist-name">
+						<input type="submit" value="Add playlist" class="btn btn-primary">
+					</form>
+					<div id ="playlists">
+					</div>
+				</div>
+				<div class="span9">
+					<div id="tracklist">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="navbar navbar-fixed-bottom container-fluid">
+			<div class="row-fluid">
+				<div id="queue" class="span12">
+					<div id="controls" class="btn-group">
+						<a class="play btn btn-primary" href="#">Play</a>
+						<a class="stop btn" href="#">Stop</a>
+						<a class="rewind btn" href="#">RW</a>
+						<a class="ff btn" href="#">FF</a>
+					</div>
+					<p id="play-status">
+					</p>
+					<div class="progress">
+						<div class="bar" style="width: 0%;" id="time">
+						</div>
+					</div>
+					<ul id="queued-songs">
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script id="tracklist_template" type="text/x-tmpl">
+			<div class="page-header">
+	        	<h2><%= name %> <small>Tracklist (<%= tracks.length %> tracks)</small></h2>
+		        <% if (stored) { %>
+		        <a href="#" class="delete-playlist">Delete playlist</a> |		        
+		        <% } %>
+		        <a href="#" class="queue-tracklist">Queue all these tracks</a>
+	        </div>
+			<table class="table table-striped">
+				<tr>
+					<th></th>
+					<th></th>
+					<th>Title</th>
+					<th>Artist</th>
+					<th>Album</th>
+				</tr>
+				<% for ( var i = 0; i < tracks.length; i++ ) { %>
+					<tr>
+						<td data-index="<%= i %>">
+							<% if (!stored) { %>
+							<a href="#" class="dragable">Add to PL</a>
+							<% } else { %>
+							<a href="#" class="delete-track">Delete from PL</a>
+							<% } %>
+						</td>
+						<td data-index="<%= i %>">
+							<a href="#" class="queue-track">Queue</a>
+						</td>
+						<td data-index="<%= i %>">
+							<a href="#" class="queue-track"><%= tracks[i].getTitle() %></a>
+						</td>
+						<td>
+						<% for (var j=0; j<tracks[i].getArtists().length; j++) { %>
+							<% if (tracks[i].getArtists()[j].getId() !== null) { %>
+							<a href="#search/artist-albums/<%= tracks[i].getArtists()[j].getId() %>"><%= tracks[i].getArtists()[j].getName() %></a>
+							<% } else { %>
+								<%= tracks[i].getArtists()[j].getName() %>
+							<% } %>
+						<% } %>
+						</td>
+						<td>
+							<a href="#search/album-tracks/<%= tracks[i].getAlbum().getId() %>"><%= tracks[i].getAlbum().getName() %>
+							</a>
+						</td>
+					</tr>
+				<% } %>
+			</table>
+		</script>
+		<script id="album_search_results_template" type="text/x-tmpl">
+			<h2><%= title %></h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Album</th>
+					<th>Artist</th>
+				</tr>
+				<% for (var i = 0; i < results.length; i++ ) { %>
+					<tr>
+						<td><a href="#search/album-tracks/<%= results[i].album.getId() %>"><%= results[i].album.getName() %></a></td>
+						<td>
+						<% for (var j=0; j< results[i].artists.length; j++) { %>
+							<a href="#search/artist-albums/<%= results[i].artists[j].getId() %>"><%= results[i].artists[j].getName() %></a>
+						<% } %>
+						</td>
+					</tr>
+				<% } %>
+			</table>
+		</script>
+		<script id="artist_lookup_results_template" type="text/x-tmpl">
+			<h2><%= title %></h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Album</th>
+				</tr>
+				<% for (var i = 0; i < results.albums.length; i++ ) { %>
+					<tr>
+						<td><a href="#search/album-tracks/<%= results.albums[i].id %>"><%= results.albums[i].name %></a></td>
+					</tr>
+				<% } %>
+			</table>
+		</script>
+		<script id="artist_search_results_template" type="text/x-tmpl">
+			<h2><%= title %></h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Artist</th>
+				</tr>
+				<% for ( var i = 0; i < results.length; i++ ) { %>
+					<tr>
+						<td>
+							<a href="#search/artist-albums/<%= results[i].id %>"><%= results[i].name %></a>
+						</td>
+					</tr>
+				<% } %>
+			</table>
+		</script>
+		<script id="user_playlists_template" type="text/x-tmpl">
+			<span id="drop-success" class="hidden label label-success"></span>
+			<ul class="nav nav-list" id="playlists">
+				<li class="nav-header">
+					My playlists
+				</li>
+				<li>
+					<% for ( var i = 0; i < data.length; i++ ) { %>
+						<li class="playlist" data-index="<%= i %>">
+							<a href="#" class="show-playlist">
+								<%= data[i].getName() %>
+							</a> 
+						</li>
+					<% } %>
+				</li>
+			</ul>
+		</script>
+		<script id="queued_tracks_template" type="text/x-tmpl">
+			<% for ( var i = 0; i < data.length; i++ ) { %>
+				<li><a href="#" class="play-queued-track" data-index="<%= i %>"><%= data[i].getTitle() %></p></li>
+			<% } %>
+		</script>
+		<script src="js/tmpl.js"></script>
+		<script src="js/spotify-search.js"></script>
+		<script src="js/player.js"></script>
+	</body>
+</html>

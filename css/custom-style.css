@@ -1,0 +1,41 @@
+#queue {
+	background-color:#fff;
+}
+#queued-songs {
+	display: table;
+	background-color:#fff;
+	margin:5px;
+}
+
+#queued-songs li {
+	list-style: none;
+	width: 60px;
+	height: 60px;
+	text-align: center;
+	border: 1px solid #eee;
+	display: table-cell;
+	vertical-align:middle;				
+	color:#333;
+}
+
+#queued-songs a {
+	overflow: hidden;
+	max-height:60px;
+}
+
+#playlists li {
+	position:relative;
+}
+
+#playlists a.over {
+	font-weight:bold;
+	background-color:#ffe;
+}
+
+.dragable {
+	cursor:move;
+}
+
+#controls {
+	margin-bottom: 5px;
+}

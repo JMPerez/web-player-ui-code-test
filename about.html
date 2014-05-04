@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Web Music Player</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet"/>
+		<link href="css/custom-style.css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div class="navbar">
+		  <div class="navbar-inner">
+		    <div class="container">
+		      <a class="brand" href="index.html">
+				  Web Music Player
+			  </a>
+			  <ul class="nav">
+			  	<li><a href="about.html">About</a></li>
+			  </ul>
+		    </div>
+		  </div>
+		</div>
+		<div class="container">
+			<h2>Description</h2>
+			<p>This web based music player aims to fulfill the set of requested features using HTML5 and Object-Oriented Javascript.</p>
+
+			<h3>How to use</h3>
+			<p>This music player makes it possible to carry out the actions that were requested for this demo:</p>
+			<ol>
+				<li>Perform track/artist/album searches</li>
+				<li>Maintain playlists</li>
+				<li>Maintain a current queue of songs</li>
+				<li>Player controls</li>
+			</ol>
+
+			<h4>Perform track/artist/album searches</h4>
+			<p>The user can search a track, artist or album using the search form that is located on top of the page. It uses the Spotify Metadata API and displays up to 100 results. Additional navigation can be carried out clicking on the links shown in the results.</p>
+			<p>By using window hash, back and forward buttons can be used to navigate across the history, allowing bookmarkable URLs to quickly open a search results page. For instance, we can look for <a href="index.html#search/artist/michael_jackson">artists whose name is Michael Jackson</a> or track name is <a href="index.html#search/track/copenhague">Copenhague</a>.</p>
+
+			<h4>Maintain playlists</h4>
+			<p>User's playlist are shown on the left side. Playlists can be created using the top form, or deleted using the <i>Delete playlist</i> link when viewing a certain playlist. By clicking on a playlist name its content is shown in the tracklist.</p>
+			<p>These playlists are stored in the browser's localStorage, and they are loaded when the user opens the page.</p>
+
+			<h4>Maintain a current queue of songs</h4>
+			<p>Songs can be queued when viewing the content of a playlist or performing a search/lookup that returns tracks results. A queue of songs is shown at the bottom of the page.</p>
+
+			<h4>Player controls</h4>
+			<p>The requested controls have been implemented. Thus, we can play, stop, rewind or fast forward a track. Elapsed time is shown next to the controls.</p>
+
+			<h3>Technologies used</h3>
+			
+			<p>I have implemented this music player using HTML, Javascript and CSS. For the Javascript part, I decided I would use raw Javascript rather than build it on top of a specific stack.</p>
+
+			<p>I took for granted that the browser has HTML5 support, and I didn't want to tight the solution to certain libraries. Since I am interested in WPO and mobile development, I don't like loading more JS code than needed, and writing <i>low level</i> JS is a way to show I know what is going on when using libraries such as jQuery.</p> Moreover, these libraries are often used to fill the gaps in JS API across multiple browsers, which is not needed in this case where we know that it will support HTML5.</p>
+
+			<p>Thus, I have only used an external JS library which is <a href="http://ejohn.org/blog/javascript-micro-templating/">John Resig's JavaScript Micro-Templating</a>. It provides a handy way to inject a JSON object to a HTML template, avoiding the awkward composition of HTML using concatenation in a JS file.</p> This small snippet does not have any dependencies on any JS library, and it was enough for what I needed.</p>
+
+			<p>Even though images and CSS were not going to be taken into account in the test, I think they are important for the look and feel of the implementantion. I chose <a href="http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a> because I could easily give a clean and aesthetic style to the elements of the page.</p>
+
+			<h3>Overview</h3>
+
+			<p>The web page uses a JS file which defines certain JS instances that manage the different elements. There is a QueueManager, TracklistManager, PlaylistManager and RouteManager. In addition, I implemented a basic library to access <a href="https://developer.spotify.com/technologies/web-api/">Spotify Metadata API</a> and retrieve the data that was needed.</p>
+
+			<p>I have extensively used event delegation as a way to reduce the amount of events attached, and to easily render and inject templates without having to rebind its events.</p>
+
+			<p>The different managers encapsulate how the models are represented, and they expose the public functions that are needed to communicate between them. I have used a <href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/#revealingmodulepatternjavascript">Reveling Module Pattern</a> to hide the internals ad private functions that don't need to be exposed.</p>
+			<p>For the models that need multiple instances (track, artists, etc) I have set their methods in their prototype, so they can be shared and don't need to be redefine for every instance.</p>
+
+			<h4>QueueManager</h4>
+			<p>The queue manager carries out the management of the queued tracks, as well as the player controls.</p>
+			<p>From there, the user can play a queued track by clicking on it, or play the first one
+			clicking on the 'Play' button. Controls to stop the song, rewind and fast forward are also present.</p>
+			<p>Rewind and fast forward is done by clicking its button, and while it is pressed, it will keep on fast forwarding or rewinding until the song finishes or reaches it starting point.</p>
+
+			<h4>TracklistManager</h4>
+			<p>The tracklist manager renders a set of tracks as a table. These tracks can be the result of a track search or a user's playlist content. From there, the user can queue a track by clicking on its name or on <i>Queue</i>, queue the whole list of tracks, or navigate through the track's authors or album. If the track belongs to a playlist, it can be deleted from there (<i>Delete from PL</i>), and if it is the result of a search, songs can be added from there to a certain playlist (<i>Add to PL</i>) by dragging it and dropping on a certain playlist. The track will be appended to the end of that playlists.</p>
+
+			<h4>PlaylistManager</h4>
+			<p>It manages the playlist for the current user. A user can create a new playlist by setting a name and clicking <i>Add playlist</i>. An empty new playlist will be added.</p>
+
+			<p>When clicking on a playlist name, its content is shown on the right side. From there the playlist can be deleted, and its songs can be deleted or queued as explained in TracklistManager section.</p>
+
+			<h4>RouteManager</h4>
+			<p>It detects changes in the window hash and is capable of executing the actions associated to a certain route. It is useful to store a state of the page, since we can bookmark a lookup result and even navigate forward and backward when navigating through artist, albums and tracks links.</p>
+
+			<h3>Place for improvement</h3>
+			<p>There are some features that could be added too to improve the web player:</p>
+			<ul>
+				<li>Drag and dropping to reorder the set of tracks in a certain playlist</li>
+				<li>Rename playlists</li>
+				<li>Persist the current queue in localStorage</li>
+				<li>Pagination of search results</li>
+			</ul>
+		</div>
+	</body>
+</html>
